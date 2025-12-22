@@ -1,5 +1,5 @@
 namespace PulseCare.API.Data.Enums;   
-   public enum HealthTipCategory
+   public enum HealthTipCategoryType
     {
         Nutrition,
         Exercise,
