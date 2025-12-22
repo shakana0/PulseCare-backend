@@ -6,6 +6,6 @@ namespace PulseCare.API.Data.Entities.Users;
     public Guid Id { get; set; }
     public required string Email { get; set; }
     public required string Name { get; set; }
-    public UserRole Role { get; set; }
+    public UserRoleType Role { get; set; }
     public string? Avatar { get; set; }
 }
