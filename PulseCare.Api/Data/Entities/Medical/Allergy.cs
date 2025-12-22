@@ -3,7 +3,7 @@ using PulseCare.API.Data.Entities.Users;
 namespace PulseCare.API.Data.Entities.Medical;
   public class Allergy
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public required string Name { get; set; }
         public Guid PatientId { get; set; }
         public Patient? Patient { get; set; }
