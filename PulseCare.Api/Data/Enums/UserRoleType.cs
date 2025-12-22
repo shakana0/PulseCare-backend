@@ -1,6 +1,6 @@
    namespace PulseCare.API.Data.Enums;
-   public enum UserRole
+   public enum UserRoleType
     {
         Patient,
-        Admin
+        Doctor
     }
