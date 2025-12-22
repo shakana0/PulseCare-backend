@@ -21,7 +21,7 @@ namespace PulseCare.Api.Context
                 Id = Guid.NewGuid(),
                 Email = "patient@example.com",
                 Name = "John Doe",
-                Role = UserRole.Patient,
+                Role = UserRoleType.Patient,
                 Avatar = "patient-avatar.png"
             };
 
@@ -30,7 +30,7 @@ namespace PulseCare.Api.Context
                 Id = Guid.NewGuid(),
                 Email = "doctor@example.com",
                 Name = "Dr. Sarah Smith",
-                Role = UserRole.Admin,
+                Role = UserRoleType.Doctor,
                 Avatar = "doctor-avatar.png"
             };
 
@@ -210,7 +210,7 @@ namespace PulseCare.Api.Context
             {
                 Id = Guid.NewGuid(),
                 PatientId = patient.Id,
-                Category = HealthTipCategory.Medication,
+                Category = HealthTipCategoryType.Medication,
                 Title = "Medication Timing",
                 Content = "Take your blood pressure medication at the same time every day.",
                 Icon = "Pill"
@@ -220,7 +220,7 @@ namespace PulseCare.Api.Context
             {
                 Id = Guid.NewGuid(),
                 PatientId = patient.Id,
-                Category = HealthTipCategory.Nutrition,
+                Category = HealthTipCategoryType.Nutrition,
                 Title = "Hydration Matters",
                 Content = "Drink 8 glasses of water daily to support kidney function.",
                 Icon = "Droplets"
