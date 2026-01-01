@@ -1,4 +1,7 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PulseCare.Api.Context;
 using PulseCare.API.Context;
 
@@ -18,6 +21,44 @@ builder.Services.AddScoped<INoteRepository, NoteRepository>();
 builder.Services.AddDbContext<PulseCareDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+//Auth
+var issuer = builder.Configuration["Jwt:Issuer"];
+var audience = builder.Configuration["Jwt:Audience"];
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = issuer;
+        options.Audience = audience;
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = context =>
+            {
+                var claimsIdentity = context?.Principal?.Identity as ClaimsIdentity;
+
+                var role = context?.Principal?.FindFirst("role")?.Value;
+
+                if (!string.IsNullOrEmpty(role))
+                {
+                    claimsIdentity?.AddClaim(new Claim(ClaimTypes.Role, role));
+                }
+
+                return Task.CompletedTask;
+            }
+        };
+    });
+
+
+builder.Services.AddAuthorization();
+
 // Add services to the container.
 var app = builder.Build();
 
@@ -34,6 +75,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 app.Run();
