@@ -29,15 +29,16 @@ public class PatientDashboardController : ControllerBase
         };
 
         var healthStatsDto = patient.HealthStats
-        .OrderByDescending(h => h.Date)
-        .Select(h => new HealthStatDto
-        {
-            Type = h.Type.ToString(),
-            Value = h.Value,
-            Unit = h.Unit,
-            Date = h.Date
-        })
-       .ToList();
+            .OrderByDescending(h => h.Date)
+            .Select(h => new HealthStatsDto(
+                h.Id,
+                h.Type,
+                h.Value,
+                h.Unit,
+                h.Date,
+                h.Status
+            ))
+            .ToList();
 
         var medicationsDto = patient.Medications
             .Select(m => new MedicationDto(
