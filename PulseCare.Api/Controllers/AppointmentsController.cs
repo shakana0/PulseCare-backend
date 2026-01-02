@@ -60,5 +60,35 @@ public class AppointmentsController : ControllerBase
         return Ok(appointmentsDto);
     }
 
+    [HttpPost]
+    public async Task<ActionResult<AppointmentDto>> CreateAppointment(CreateAppointmentDto dto)
+    {
+        var appointment = new Appointment
+        {
+            Id = Guid.NewGuid(),
+            PatientId = dto.PatientId,
+            DoctorId = dto.DoctorId,
+            Date = dto.Date,
+            Time = TimeSpan.Parse(dto.Time),
+            Type = Enum.Parse<AppointmentType>(dto.Type),
+            Status = AppointmentStatusType.Scheduled,
+            Comment = dto.Reason
+        };
+
+        var created = await _appointmentRepository.CreateAppointment(appointment);
+
+        var resultDto = new AppointmentDto
+        {
+            Date = created.Date,
+            Time = created.Time.ToString(@"hh\:mm"),
+            Type = created.Type.ToString(),
+            Status = created.Status.ToString(),
+            DoctorName = created.Doctor?.User?.Name,
+            Reason = created.Comment,
+            Notes = new List<string>()
+        };
+
+        return CreatedAtAction(nameof(GetPatientAppointments), new { patientId = created.PatientId }, resultDto);
+    }
 }
 
