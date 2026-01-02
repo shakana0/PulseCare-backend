@@ -28,10 +28,13 @@ public class PatientRepository : IPatientRepository
             .Include(p => p.Conditions)
             .Include(p => p.Allergies)
             .Include(p => p.Medications)
+            .Include(p => p.HealthStats)
             .Include(p => p.Appointments)
-            .ThenInclude(a => a.Doctor)
-            .ThenInclude(d => d.User)
+                .ThenInclude(a => a.Doctor)
+                    .ThenInclude(d => d.User)
             .Include(p => p.Notes)
+                .ThenInclude(n => n.Doctor)
+                    .ThenInclude(d => d.User)
             .FirstOrDefaultAsync(p => p.Id == patientId);
     }
 }

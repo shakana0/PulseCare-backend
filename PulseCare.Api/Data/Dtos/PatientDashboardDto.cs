@@ -1,7 +1,6 @@
 public class PatientDashboardDto
 {
     public PatientDto Patient { get; set; }
-    public HealthTipDto HealthTip { get; set; }
     public List<HealthStatDto> HealthStats { get; set; }
     public List<MedicationDto> Medications { get; set; }
     public List<AppointmentDto> Appointments { get; set; }
