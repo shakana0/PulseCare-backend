@@ -1,4 +1,3 @@
-using System.Linq;
 using PulseCare.API.Context;
 using PulseCare.API.Data.Entities.Medical;
 
@@ -21,5 +20,28 @@ public class MedicationRepository : IMedicationRepository
         await _context.Medications.AddAsync(medication);
         await _context.SaveChangesAsync();
         return medication;
+    }
+
+    public async Task<Medication?> GetMedicationByIdAsync(Guid medicationId)
+    {
+        return await _context.Medications.FindAsync(medicationId);
+    }
+
+    public async Task<Medication?> UpdateMedicationAsync(Guid medicationId, Medication medication)
+    {
+        var existingMedication = await _context.Medications.FindAsync(medicationId);
+
+        if (existingMedication == null)
+            return null;
+
+        existingMedication.Name = medication.Name;
+        existingMedication.Dosage = medication.Dosage;
+        existingMedication.Frequency = medication.Frequency;
+        existingMedication.Instructions = medication.Instructions;
+        existingMedication.TimesPerDay = medication.TimesPerDay;
+        existingMedication.StartDate = medication.StartDate;
+
+        await _context.SaveChangesAsync();
+        return existingMedication;
     }
 }
