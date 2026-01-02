@@ -1,6 +1,6 @@
-using Data.Dtos;
+using PulseCare.API.Data.Entities.Communication;
 
 public interface INoteRepository
 {
-    Task<IEnumerable<NoteDto>> GetAllByIdAsync(Guid patientId);
+    Task<IEnumerable<Note>> GetAllByIdAsync(Guid? patientId);
 }

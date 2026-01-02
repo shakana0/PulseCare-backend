@@ -26,7 +26,26 @@ public class NotesController : ControllerBase
             return NotFound("User not found");
         }
 
-        return Ok();
+        var entities = await _noteRepository.GetAllByIdAsync(userId);
+
+        var response = entities.Select(n =>
+        {
+            var appointmentType = n.Appointment?.Type.ToString() ?? "";
+            var date = n.Date.ToString("dd/MM/yyyy");
+
+            return new NoteDto
+            {
+                NoteId = n.Id,
+                Title = n.Title,
+                CreatedAt = n.Date,
+                AuthorName = n.Doctor?.User?.Name ?? "Unknown doctor",
+                Content = n.Content,
+                Diagnosis = n.Diagnosis,
+                AppointmentDetails = $"From {appointmentType} appointment on {date}"
+            };
+        }).ToList();
+
+        return Ok(response);
     }
 
     private async Task<Guid?> GetUserIdAsync()
