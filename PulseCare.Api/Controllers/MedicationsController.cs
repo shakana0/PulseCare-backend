@@ -4,6 +4,7 @@ using PulseCare.API.Data.Entities.Medical;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class MedicationsController : ControllerBase
 {
     private readonly IMedicationRepository _medicationRepository;
@@ -64,6 +65,38 @@ public class MedicationsController : ControllerBase
             createdMedication.Instructions,
             createdMedication.TimesPerDay,
             createdMedication.StartDate
+        ));
+    }
+
+    [HttpPut("{medicationId}")]
+    public async Task<ActionResult<MedicationDto>> UpdateMedication(Guid medicationId, [FromBody] UpdateMedicationDto updateMedicationDto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var medication = new Medication
+        {
+            Name = updateMedicationDto.Name,
+            Dosage = updateMedicationDto.Dosage,
+            Frequency = updateMedicationDto.Frequency,
+            Instructions = updateMedicationDto.Instructions,
+            TimesPerDay = updateMedicationDto.TimesPerDay,
+            StartDate = updateMedicationDto.StartDate
+        };
+
+        var updatedMedication = await _medicationRepository.UpdateMedicationAsync(medicationId, medication);
+
+        if (updatedMedication == null)
+            return NotFound();
+
+        return Ok(new MedicationDto(
+            updatedMedication.Id,
+            updatedMedication.Name,
+            updatedMedication.Dosage,
+            updatedMedication.Frequency,
+            updatedMedication.Instructions,
+            updatedMedication.TimesPerDay,
+            updatedMedication.StartDate
         ));
     }
 }
