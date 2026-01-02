@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using PulseCare.API.Context;
 
-public class HealthStatsRepository : IHealthStatsRepository
+public class HealthStatRepository : IHealthStatRepository
 {
     private readonly PulseCareDbContext _context;
-    public HealthStatsRepository(PulseCareDbContext context)
+    public HealthStatRepository(PulseCareDbContext context)
     {
         _context = context;
     }
