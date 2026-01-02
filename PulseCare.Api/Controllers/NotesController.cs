@@ -19,14 +19,13 @@ public class NotesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<NoteDto>>> GetAll()
     {
-        var userId = await GetUserIdAsync();
-
-        if (userId == null)
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId))
         {
-            return NotFound("User not found");
+            return Unauthorized();
         }
 
-        var entities = await _noteRepository.GetAllByIdAsync(userId);
+        var entities = await _noteRepository.GetAllByClerkUserIdAsync(userId);
 
         var response = entities.Select(n =>
         {
@@ -48,18 +47,6 @@ public class NotesController : ControllerBase
         return Ok(response);
     }
 
-    private async Task<Guid?> GetUserIdAsync()
-    {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userId))
-            return null;
 
-        if (!Guid.TryParse(userId, out Guid result))
-        {
-            return null;
-        }
-
-        return result;
-    }
 
 }

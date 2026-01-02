@@ -11,15 +11,15 @@ public class NoteRepository : INoteRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Note>> GetAllByIdAsync(Guid? patientId)
+    public async Task<IEnumerable<Note>> GetAllByClerkUserIdAsync(string clerkUserId)
     {
-        var response = await _context.Notes
+        return await _context.Notes
+            .AsNoTracking()
             .Include(n => n.Doctor)
                 .ThenInclude(d => d.User)
             .Include(n => n.Appointment)
-            .Where(n => n.PatientId == patientId)
-            .ToListAsync();
-
-        return response;
+            .Include(n => n.Patient)
+                .ThenInclude(p => p.User)
+            .Where(n => n.Patient.User.ClerkId == clerkUserId);
     }
 }
