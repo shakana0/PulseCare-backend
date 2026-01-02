@@ -10,7 +10,9 @@ public class HealthStatsRepository : IHealthStatsRepository
     }
     public async Task<ActionResult<List<HealthStatsDto>>> GetHealthStatsAsync(Guid id)
     {
-        var healthData = _context.HealthStats.Where(h => h.PatientId == id);
+        var healthData = _context.HealthStats.Where(h => h.PatientId == id).ToList();
+
+        if (!healthData.Any()) return new NotFoundResult();
 
         var response = new List<HealthStatsDto>();
 

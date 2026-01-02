@@ -6,16 +6,18 @@ namespace PulseCare.Api.Controllers;
 [ApiController]
 public class HealthStatsController : ControllerBase
 {
-    private readonly HealthStatsRepository _repository;
-    public HealthStatsController(HealthStatsRepository repository)
+    private readonly IHealthStatsRepository _repository;
+    public HealthStatsController(IHealthStatsRepository repository)
     {
         _repository = repository;
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<List<HealthStatsDto>>> GetHealthStats(Guid id)
+    [HttpGet("{patientId}")]
+    public async Task<ActionResult<List<HealthStatsDto>>> GetHealthStats(Guid patientId)
     {
-        return await _repository.GetHealthStatsAsync(id);
+        var healthStats = await _repository.GetHealthStatsAsync(patientId);
+
+        return Ok(healthStats);
     }
 }
 

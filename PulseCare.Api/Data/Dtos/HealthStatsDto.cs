@@ -1,4 +1,3 @@
-
 using System.Text.Json.Serialization;
 using PulseCare.API.Data.Enums;
 

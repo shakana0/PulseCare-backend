@@ -10,7 +10,7 @@ builder.Services.AddSwaggerGen();
 // Add repositories to the container.
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
-builder.Services.AddScoped<IHealthStatRepository, HealthStatRepository>();
+builder.Services.AddScoped<IHealthStatsRepository, HealthStatsRepository>();
 builder.Services.AddScoped<IMedicationRepository, MedicationRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<INoteRepository, NoteRepository>();
