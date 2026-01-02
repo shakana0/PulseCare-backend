@@ -90,5 +90,33 @@ public class AppointmentsController : ControllerBase
 
         return CreatedAtAction(nameof(GetPatientAppointments), new { patientId = created.PatientId }, resultDto);
     }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateAppointment(Guid id, UpdateAppointmentDto dto)
+    {
+        var appointment = await _appointmentRepository.GetAppointmentById(id);
+        if (appointment == null) 
+            return NotFound();
+
+        appointment.Date = dto.Date;
+        appointment.Time = dto.Time;
+        appointment.Type = dto.Type;
+        appointment.Status = dto.Status;
+        appointment.Comment = dto.Reason;
+
+        await _appointmentRepository.UpdateAppointment(appointment);
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteAppointment(Guid id)
+    {
+        var result = await _appointmentRepository.DeleteAppointment(id);
+
+        if (!result)
+            return NotFound();
+
+        return NoContent();
+    }
 }
 
