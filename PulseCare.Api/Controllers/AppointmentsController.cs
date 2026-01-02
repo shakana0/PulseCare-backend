@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using PulseCare.API.Data.Dtos;
+using PulseCare.API.Data.Entities.Medical;
+using PulseCare.API.Data.Enums;
 
 [ApiController]
 [Route("[controller]")]
@@ -8,6 +11,28 @@ public class AppointmentsController : ControllerBase
     public AppointmentsController(IAppointmentRepository appointmentRepository)
     {
         _appointmentRepository = appointmentRepository;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetAllAppointments()
+    {
+        var appointments = await _appointmentRepository.GetAllAppointments();
+
+        var appointmentsDto = appointments.Select(a => new AppointmentDto
+        {
+            Date = a.Date,
+            Time = a.Time.ToString(@"hh\:mm"),
+            Type = a.Type.ToString(),
+            Status = a.Status.ToString(),
+            DoctorName = a.Doctor?.User?.Name,
+            Reason = a.Comment,
+            Notes = a.AppointmentNotes
+                       .Where(n => n.AppointmentId == a.Id)
+                       .Select(n => n.Content)
+                       .ToList()
+        }).ToList();
+
+        return Ok(appointmentsDto);
     }
 
     [HttpGet("{patientId}")]
