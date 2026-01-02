@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 public class AppointmentsController : ControllerBase
 {
     private readonly IAppointmentRepository _appointmentRepository;
+
     public AppointmentsController(IAppointmentRepository appointmentRepository)
     {
         _appointmentRepository = appointmentRepository;
@@ -34,6 +35,5 @@ public class AppointmentsController : ControllerBase
 
         return Ok(appointmentsDto);
     }
-
 }
 
