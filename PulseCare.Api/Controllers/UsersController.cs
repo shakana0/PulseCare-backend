@@ -11,15 +11,16 @@ namespace Controllers;
 public class UsersController : ControllerBase
 {
     private readonly IUserRepository _userRepository;
+    public record UserRequestDto(string Name, string Email);
 
     public UsersController(IUserRepository userRepository)
     {
         _userRepository = userRepository;
     }
 
-    [HttpGet("sync")]
+    [HttpPost("sync")]
     [Authorize]
-    public async Task<IActionResult> Sync()
+    public async Task<IActionResult> Sync(UserRequestDto request)
     {
         var clerkUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -32,23 +33,20 @@ public class UsersController : ControllerBase
 
         if (!exists)
         {
-            var newUser = CreateUserFromToken(clerkUserId);
+            var newUser = CreateUser(clerkUserId, request);
             await _userRepository.CreateAsync(newUser);
         }
 
         return NoContent();
     }
 
-    private User CreateUserFromToken(string clerkUserId)
+    private User CreateUser(string clerkUserId, UserRequestDto request)
     {
-        var name = User.FindFirst("name")?.Value;
-        var email = User.FindFirst("email")?.Value;
-
         return new User
         {
             ClerkId = clerkUserId,
-            Name = name,
-            Email = email
+            Name = request.Name,
+            Email = request.Email
         };
     }
 }
