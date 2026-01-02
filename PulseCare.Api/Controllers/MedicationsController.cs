@@ -36,7 +36,7 @@ public class MedicationsController : ControllerBase
     }
 
     [HttpPost("{patientId}")]
-    public async Task<ActionResult<MedicationDto>> CreateMedication(Guid patientId, CreateMedicationDto createMedicationDto)
+    public async Task<ActionResult<MedicationDto>> CreateMedication(Guid patientId, [FromBody] CreateMedicationDto createMedicationDto)
     {
         if (!ModelState.IsValid)
         {
