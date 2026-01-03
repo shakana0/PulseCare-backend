@@ -15,10 +15,13 @@ builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IHealthStatRepository, HealthStatRepository>();
 builder.Services.AddScoped<IMedicationRepository, MedicationRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 builder.Services.AddScoped<INoteRepository, NoteRepository>();
 
 builder.Services.AddDbContext<PulseCareDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddSignalR(); builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
 //Auth
 var issuer = builder.Configuration["Jwt:Issuer"];
@@ -91,4 +94,5 @@ app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<PulseCareHub>("/pulsecarehub");
 app.Run();
