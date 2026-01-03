@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PulseCare.API.Data.Dtos;
 using PulseCare.API.Data.Entities.Medical;
@@ -14,6 +15,7 @@ public class AppointmentsController : ControllerBase
         _appointmentRepository = appointmentRepository;
     }
 
+    [Authorize(Roles = "admin")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetAllAppointments()
     {
@@ -37,6 +39,7 @@ public class AppointmentsController : ControllerBase
         return Ok(appointmentsDto);
     }
 
+    [Authorize]
     [HttpGet("{patientId}")]
     public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetPatientAppointments(Guid patientId)
     {
@@ -58,6 +61,7 @@ public class AppointmentsController : ControllerBase
         return Ok(appointmentsDto);
     }
 
+    [Authorize(Roles = "admin")]
     [HttpPost]
     public async Task<ActionResult<AppointmentDto>> CreateAppointment(CreateAppointmentDto dto)
     {
@@ -89,6 +93,7 @@ public class AppointmentsController : ControllerBase
         return CreatedAtAction(nameof(GetPatientAppointments), new { patientId = created.PatientId }, resultDto);
     }
 
+    [Authorize(Roles = "admin")]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateAppointment(Guid id, UpdateAppointmentDto dto)
     {
@@ -106,6 +111,7 @@ public class AppointmentsController : ControllerBase
         return Ok(dto);
     }
 
+    [Authorize(Roles = "admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAppointment(Guid id)
     {
