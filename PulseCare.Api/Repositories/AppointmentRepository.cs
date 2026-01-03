@@ -10,7 +10,8 @@ public class AppointmentRepository : IAppointmentRepository
     {
         _context = context;
     }
-    public async Task<IEnumerable<Appointment>> GetAppointmentsById(Guid patientId)
+    
+    public async Task<IEnumerable<Appointment>> GetAppointmentsByPatientIdAsync(Guid patientId)
     {
         return await _context.Appointments
             .Include(a => a.Patient)
@@ -22,7 +23,7 @@ public class AppointmentRepository : IAppointmentRepository
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Appointment>> GetAllAppointments()
+    public async Task<IEnumerable<Appointment>> GetAllAppointmentsAsync()
     {
         return await _context.Appointments
             .Include(a => a.Patient)
@@ -33,7 +34,7 @@ public class AppointmentRepository : IAppointmentRepository
             .ToListAsync();
     }
 
-    public async Task<Appointment?> GetAppointmentById(Guid id)
+    public async Task<Appointment?> GetAppointmentByIdAsync(Guid appointmentId)
     {
         return await _context.Appointments
             .Include(a => a.Patient)
@@ -41,19 +42,20 @@ public class AppointmentRepository : IAppointmentRepository
             .Include(a => a.Doctor)
                 .ThenInclude(d => d.User)
             .Include(a => a.AppointmentNotes)
-            .FirstOrDefaultAsync(a => a.Id == id);
+            .FirstOrDefaultAsync(a => a.Id == appointmentId);
     }
 
-    public async Task<Appointment> CreateAppointment(Appointment appointment)
+    public async Task<Appointment> CreateAppointmentAsync(Appointment appointment)
     {
         _context.Appointments.Add(appointment);
         await _context.SaveChangesAsync();
         return appointment;
     }
 
-    public async Task<Appointment?> UpdateAppointment(Appointment appointment)
+    public async Task<Appointment?> UpdateAppointmentAsync(Appointment appointment)
     {
         var existingAppointment = await _context.Appointments.FindAsync(appointment.Id);
+
         if (existingAppointment == null)
         {
             return null;
@@ -64,9 +66,9 @@ public class AppointmentRepository : IAppointmentRepository
         return existingAppointment;
     }
 
-    public async Task<bool> DeleteAppointment(Guid id)
+    public async Task<bool> DeleteAppointmentAsync(Guid appointmentId)
     {
-        var appointment = await _context.Appointments.FindAsync(id);
+        var appointment = await _context.Appointments.FindAsync(appointmentId);
         if (appointment == null)
         {
             return false;
