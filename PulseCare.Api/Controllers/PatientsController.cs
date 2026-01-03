@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
+[Authorize(Roles = "Admin")]
 public class PatientsController : ControllerBase
 {
     private readonly IPatientRepository _patientRepository;
