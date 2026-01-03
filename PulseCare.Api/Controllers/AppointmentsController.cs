@@ -91,7 +91,7 @@ public class AppointmentsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateAppointment(Guid id, UpdateAppointmentDto dto)
     {
-        var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id);
+        var appointment = await _appointmentRepository.GetAppointmentByAppointmentIdAsync(id);
         if (appointment == null) 
             return NotFound();
 

@@ -34,7 +34,7 @@ public class AppointmentRepository : IAppointmentRepository
             .ToListAsync();
     }
 
-    public async Task<Appointment?> GetAppointmentByIdAsync(Guid appointmentId)
+    public async Task<Appointment?> GetAppointmentByAppointmentIdAsync(Guid appointmentId)
     {
         return await _context.Appointments
             .Include(a => a.Patient)
