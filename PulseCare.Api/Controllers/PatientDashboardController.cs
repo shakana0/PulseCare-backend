@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PulseCare.API.Data.Entities.Users;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -7,20 +9,50 @@ using Microsoft.AspNetCore.Mvc;
 public class PatientDashboardController : ControllerBase
 {
     private readonly IPatientRepository _patientRepository;
+    private readonly IUserRepository _userRepository;
 
-    public PatientDashboardController(IPatientRepository patientRepository)
+    public PatientDashboardController(IPatientRepository patientRepository, IUserRepository userRepository)
     {
         _patientRepository = patientRepository;
+        _userRepository = userRepository;
     }
 
-    // GET: /{patientId}/dashboard
-    [HttpGet("{patientId}/dashboard")]
-    public async Task<ActionResult<PatientDashboardDto>> GetPatientDashboard(Guid patientId)
+    // GET: /dashboard
+    [HttpGet("dashboard")]
+    public async Task<ActionResult<PatientDashboardDto>> GetPatientDashboard()
     {
-        var patient = await _patientRepository.GetPatientByIdAsync(patientId);
+        var clerkUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+        ?? User.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrEmpty(clerkUserId))
+        {
+            return Unauthorized("User not authenticated");
+        }
+
+        var patient = await _patientRepository.GetPatientByClerkIdAsync(clerkUserId);
 
         if (patient == null)
-            return NotFound();
+        {
+            var user = await _userRepository.GetUserAsync(clerkUserId);
+            if (user == null)
+            {
+                return NotFound("User not found for this ClerkId");
+            }
+
+            var newPatient = new Patient
+            {
+                UserId = user.Id
+            };
+
+            await _userRepository.AddPatientAsync(newPatient);
+
+            patient = await _patientRepository.GetPatientByClerkIdAsync(clerkUserId);
+
+            if (patient == null)
+            {
+                return StatusCode(500, "Failed to create patient");
+            }
+        }
 
         var patientDto = new PatientDto
         {
