@@ -10,16 +10,19 @@ public class AdminDashboardController(IAppointmentRepository appointmentReposito
     private readonly IAppointmentRepository _appointmentRepository = appointmentRepository;
     private readonly IPatientRepository _patientRepository = patientRepository;
 
-    // GET: /{patientId}/dashboard
     [Authorize(Roles = "admin")]
     [HttpGet]
-    public async Task<ActionResult<AdminDashboardDto>> GetAdminDashboard(Guid doctorId) //doctor ID
+    public async Task<ActionResult<AdminDashboardDto>> GetAdminDashboard() 
     {
         var clerkUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
             ?? User.FindFirst("sub")?.Value;
 
+        if (clerkUserId == null)
+            return Unauthorized();
+
         var patients = await _patientRepository.GetAllPatientsAsync();
-        var appointments = await _appointmentRepository.GetAllAppointmentsAsync();
+        var appointments = await _appointmentRepository.GetDoctorsAppointmentsAsync(clerkUserId!);  // real call
+        //var appointments = await _appointmentRepository.GetAllAppointmentsAsync(); // temp for testing
 
         var dashboardDto = new AdminDashboardDto
         {
@@ -27,9 +30,9 @@ public class AdminDashboardController(IAppointmentRepository appointmentReposito
             UnreadMessages = 0, // Placeholder for unread messages count
             TodayAppointments = appointments.Count(a => a.Date.Date == DateTime.Today),
             RecentPatients = appointments
-                .Where(a => a.DoctorId == doctorId)
-                .Where(a => a.Date + a.Time >= DateTime.Now)
+                .Where(a => a.Date.Date + a.Time <= DateTime.Now)
                 .OrderBy(a => a.Date).ThenBy(a => a.Time)
+                .DistinctBy(a => a.PatientId)
                 .Take(3)
                 .Select(a => new PatientDto
             {
@@ -38,10 +41,9 @@ public class AdminDashboardController(IAppointmentRepository appointmentReposito
                 Conditions = a.Patient.Conditions.Select(c => c.Name).ToList()
             }).ToList(),
             UpcomingAppointments = appointments
-                .Where(a => a.DoctorId == doctorId)
-                .Where(a => a.Date + a.Time < DateTime.Now)
-                .OrderByDescending(a => a.Date)
-                .ThenByDescending(a => a.Time)
+                .Where(a => a.Date.Date + a.Time > DateTime.Now)
+                .OrderBy(a => a.Date)
+                .ThenBy(a => a.Time)
                 .Take(3)
                 .Select(a => new AppointmentDto
             {
