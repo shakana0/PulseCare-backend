@@ -9,7 +9,7 @@ public class Patient
     public Guid UserId { get; set; }
     public User? User { get; set; }
     public DateTime DateOfBirth { get; set; }
-    public required string BloodType { get; set; }
+    public string BloodType { get; set; } = string.Empty;
 
     public ICollection<Allergy> Allergies { get; set; } = new List<Allergy>();
     public ICollection<Condition> Conditions { get; set; } = new List<Condition>();
