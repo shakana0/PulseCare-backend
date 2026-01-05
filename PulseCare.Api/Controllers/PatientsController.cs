@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "admin")]
 public class PatientsController : ControllerBase
 {
     private readonly IPatientRepository _patientRepository;
@@ -21,6 +21,7 @@ public class PatientsController : ControllerBase
 
         var patientsDto = patients.Select(p => new PatientDto
         {
+            Id = p.Id,
             Name = p.User?.Name,
             Email = p.User?.Email,
             Phone = p.EmergencyContact?.Phone,
