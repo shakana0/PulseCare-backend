@@ -12,7 +12,7 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
-    public async Task AddAdminAsync(Doctor newAdmin)
+    public async Task AddDoctorAsync(Doctor newAdmin)
     {
         _context.Doctors.Add(newAdmin);
         await _context.SaveChangesAsync();
@@ -48,7 +48,7 @@ public class UserRepository : IUserRepository
         return await _context.Users.AnyAsync(u => u.ClerkId == userId);
     }
 
-    public async Task<bool> IsExistingAdminAsync(Guid userId)
+    public async Task<bool> IsExistingDoctorAsync(Guid userId)
     {
         return await _context.Doctors.AnyAsync(d => d.UserId == userId);
     }

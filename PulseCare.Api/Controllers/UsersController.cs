@@ -36,7 +36,7 @@ public class UsersController : ControllerBase
         var userRole = User.FindFirst(ClaimTypes.Role);
         if (userRole?.Value == "admin")
         {
-            await EnsureAdminUser(user);
+            await EnsureDoctorUser(user);
         }
         else
         {
@@ -46,9 +46,9 @@ public class UsersController : ControllerBase
         return NoContent();
     }
 
-    private async Task EnsureAdminUser(User user)
+    private async Task EnsureDoctorUser(User user)
     {
-        if (await IsExistingAdmin(user))
+        if (await IsExistingDoctor(user))
         {
             return;
         }
@@ -59,9 +59,9 @@ public class UsersController : ControllerBase
             await _userRepository.RemovePatientAsync(patient);
         }
 
-        var newAdmin = new Doctor { User = user, Specialty = "General" };
+        var newDoc = new Doctor { User = user, Specialty = "General" };
 
-        await _userRepository.AddAdminAsync(newAdmin);
+        await _userRepository.AddDoctorAsync(newDoc);
     }
 
 
@@ -77,7 +77,7 @@ public class UsersController : ControllerBase
         await _userRepository.AddPatientAsync(newPatient);
     }
 
-    private async Task<bool> IsExistingAdmin(User user) => await _userRepository.IsExistingAdminAsync(user.Id);
+    private async Task<bool> IsExistingDoctor(User user) => await _userRepository.IsExistingDoctorAsync(user.Id);
     private async Task<bool> IsExistingUser(User user) => await _userRepository.IsExistingPatientAsync(user.ClerkId ?? "");
 
     private User CreateUser(string clerkUserId, UserRequestDto request)
