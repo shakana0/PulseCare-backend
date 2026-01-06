@@ -34,35 +34,7 @@ public class PatientDashboardController : ControllerBase
 
         if (patient == null)
         {
-            var user = await _userRepository.GetUserAsync(clerkUserId);
-
-            if (user == null)
-            {
-                user = new User
-                {
-                    ClerkId = clerkUserId,
-                    Email = User.FindFirst(ClaimTypes.Email)?.Value ?? "",
-                    Name = User.FindFirst(ClaimTypes.Name)?.Value ?? "Patient",
-                    Role = UserRoleType.Patient
-                };
-
-                await _userRepository.AddUserAsync(user);
-            }
-
-            var newPatient = new Patient
-            {
-                UserId = user.Id,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            await _userRepository.AddPatientAsync(newPatient);
-
-            patient = await _patientRepository.GetPatientByClerkIdAsync(clerkUserId);
-
-            if (patient == null || patient.User == null)
-            {
-                return StatusCode(500, "Failed to create patient");
-            }
+            return NotFound();
         }
 
         var patientDto = new PatientDto
