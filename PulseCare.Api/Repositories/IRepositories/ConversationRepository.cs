@@ -43,13 +43,16 @@ public class ConversationRepository : IConversationRepository
     {
         return await _context.Conversations
             .Where(c => c.PatientId == patientId)
+            .Include(c => c.Messages)
             .ToListAsync();
     }
+
 
     public async Task<List<Conversation>> GetConversationsForDoctorAsync(Guid doctorId)
     {
         return await _context.Conversations
             .Where(c => c.DoctorId == doctorId)
+            .Include(c => c.Messages)
             .ToListAsync();
     }
 }
