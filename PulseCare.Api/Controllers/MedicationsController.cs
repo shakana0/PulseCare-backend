@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PulseCare.API.Data.Entities.Medical;
@@ -12,6 +13,30 @@ public class MedicationsController : ControllerBase
     public MedicationsController(IMedicationRepository medicationRepository)
     {
         _medicationRepository = medicationRepository;
+    }
+
+    // GET: /api/medications/me
+    [HttpGet("me")]
+    public async Task<ActionResult<IEnumerable<MedicationDto>>> GetMyMedications()
+    {
+        var clerkId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrEmpty(clerkId))
+            return Unauthorized("Unable to identify user from token");
+
+        var medications = await _medicationRepository.GetMedicationsByClerkIdAsync(clerkId);
+
+        var medicationsDto = medications.Select(m => new MedicationDto(
+            m.Id,
+            m.Name,
+            m.Dosage,
+            m.Frequency,
+            m.Instructions,
+            m.TimesPerDay,
+            m.StartDate
+        )).ToList();
+
+        return Ok(medicationsDto);
     }
 
     [HttpGet("{patientId}")]
