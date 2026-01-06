@@ -45,7 +45,7 @@ public class UserRepository : IUserRepository
 
     public async Task<bool> IsExistingPatientAsync(string userId)
     {
-        return await _context.Users.AnyAsync(u => u.ClerkId == userId);
+        return await _context.Patients.Include(p => p.User).AnyAsync(u => u.User.ClerkId == userId);
     }
 
     public async Task<bool> IsExistingDoctorAsync(Guid userId)
