@@ -12,7 +12,7 @@ public class AdminDashboardController(IAppointmentRepository appointmentReposito
 
     [Authorize(Roles = "admin")]
     [HttpGet]
-    public async Task<ActionResult<AdminDashboardDto>> GetAdminDashboard() 
+    public async Task<ActionResult<AdminDashboardDto>> GetAdminDashboard()
     {
         var clerkUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
             ?? User.FindFirst("sub")?.Value;
@@ -21,37 +21,36 @@ public class AdminDashboardController(IAppointmentRepository appointmentReposito
             return Unauthorized();
 
         var patients = await _patientRepository.GetAllPatientsAsync();
-        var appointments = await _appointmentRepository.GetDoctorsAppointmentsAsync(clerkUserId!);  // real call
-        //var appointments = await _appointmentRepository.GetAllAppointmentsAsync(); // temp for testing
+        var appointments = await _appointmentRepository.GetDoctorsAppointmentsAsync(clerkUserId!);
 
         var dashboardDto = new AdminDashboardDto
         {
             TotalPatients = patients.Count(),
-            UnreadMessages = 0, // Placeholder for unread messages count
+            UnreadMessages = 0,
             TodayAppointments = appointments.Count(a => a.Date.Date == DateTime.Today),
             RecentPatients = appointments
                 .Where(a => a.Date.Date + a.Time <= DateTime.Now)
-                .OrderBy(a => a.Date).ThenBy(a => a.Time)
+                .OrderByDescending(a => a.Date).ThenByDescending(a => a.Time)
                 .DistinctBy(a => a.PatientId)
                 .Take(3)
                 .Select(a => new PatientDto
-            {
-                Name = a.Patient.User?.Name,
-                Email = a.Patient.User?.Email,
-                Conditions = a.Patient.Conditions.Select(c => c.Name).ToList()
-            }).ToList(),
+                {
+                    Name = a.Patient.User?.Name,
+                    Email = a.Patient.User?.Email,
+                    Conditions = a.Patient.Conditions.Select(c => c.Name).ToList()
+                }).ToList(),
             UpcomingAppointments = appointments
                 .Where(a => a.Date.Date + a.Time > DateTime.Now)
                 .OrderBy(a => a.Date)
                 .ThenBy(a => a.Time)
                 .Take(3)
                 .Select(a => new AppointmentDto
-            {
-                PatientName = a.Patient.User?.Name,
-                Date = a.Date,
-                Time = a.Time.ToString(@"hh\:mm"),
-                Type = a.Type.ToString(),
-            }).ToList()
+                {
+                    PatientName = a.Patient.User?.Name,
+                    Date = a.Date,
+                    Time = a.Time.ToString(@"hh\:mm"),
+                    Type = a.Type.ToString(),
+                }).ToList()
         };
 
         return Ok(dashboardDto);
