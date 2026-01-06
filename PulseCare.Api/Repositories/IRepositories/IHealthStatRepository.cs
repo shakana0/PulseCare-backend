@@ -8,4 +8,6 @@ public interface IHealthStatRepository
     Task<HealthStat?> GetHealthStatByIdAsync(Guid healthStatId);
     Task<HealthStat?> UpdateHealthStatAsync(Guid healthStatId, UpdateHealthStatDto updateDto);
     Task<bool> DeleteHealthStatAsync(Guid healthStatId);
+    Task<List<HealthStatsDto>> GetMyHealthStatsAsync(string clerkId);
+
 }
