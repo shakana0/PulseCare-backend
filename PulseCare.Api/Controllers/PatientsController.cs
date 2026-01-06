@@ -49,7 +49,10 @@ public class PatientsController : ControllerBase
             CreatedAt = patient.CreatedAt,
             BloodType = patient.BloodType,
             Conditions = patient.Conditions.Select(c => c.Name).ToList(),
-            Allergies = patient.Allergies.Select(a => a.Name).ToList()
+            Allergies = patient.Allergies.Select(a => a.Name).ToList(),
+            Medications = patient.Medications.ToList(),
+            Appointments = patient.Appointments.ToList(),
+            HealthStats = patient.HealthStats.ToList()
         };
 
         return Ok(overviewDto);
