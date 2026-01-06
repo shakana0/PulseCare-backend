@@ -24,6 +24,7 @@ public class PatientDashboardController : ControllerBase
 
         var patientDto = new PatientDto
         {
+            Id = patient.Id,
             Name = patient.User?.Name,
             Email = patient.User?.Email,
             Phone = patient.EmergencyContact?.Phone,
@@ -58,6 +59,7 @@ public class PatientDashboardController : ControllerBase
             .OrderBy(a => a.Date)
             .Select(a => new AppointmentDto
             {
+                Id = a.Id,
                 Type = a.Type.ToString(),
                 DoctorName = a.Doctor.User.Name,
                 Date = a.Date,
@@ -72,6 +74,7 @@ public class PatientDashboardController : ControllerBase
             .OrderByDescending(n => n.Date)
             .Select(n => new NoteDto
             {
+                Id = n.Id,
                 Title = n.Title,
                 DoctorName = n.Doctor.User.Name,
                 Date = n.Date,
