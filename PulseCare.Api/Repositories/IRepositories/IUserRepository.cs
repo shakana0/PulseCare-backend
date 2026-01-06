@@ -10,4 +10,6 @@ public interface IUserRepository
     Task<bool> IsExistingPatientAsync(string userId);
     Task<bool> IsExistingDoctorAsync(Guid userId);
     Task AddPatientAsync(Patient newPatient);
+    Task<User?> GetUserByPatientIdAsync(Guid patientId);
+    Task<User?> GetUserByDoctorIdAsync(Guid doctorId);
 }
