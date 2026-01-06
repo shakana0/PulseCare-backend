@@ -15,9 +15,9 @@ public class PatientRepository : IPatientRepository
     {
         return await _context.Patients
             .Include(p => p.User)
-            .Include(p => p.Conditions)
             .Include(p => p.EmergencyContact)
-            .ToArrayAsync();
+            .Include(p => p.Conditions)
+            .ToListAsync();
     }
 
     public async Task<Patient?> GetPatientByIdAsync(Guid patientId)
@@ -28,13 +28,8 @@ public class PatientRepository : IPatientRepository
             .Include(p => p.Conditions)
             .Include(p => p.Allergies)
             .Include(p => p.Medications)
-            .Include(p => p.HealthStats)
             .Include(p => p.Appointments)
-                .ThenInclude(a => a.Doctor)
-                    .ThenInclude(d => d.User)
-            .Include(p => p.Notes)
-                .ThenInclude(n => n.Doctor)
-                    .ThenInclude(d => d.User)
+            .Include(p => p.HealthStats)
             .FirstOrDefaultAsync(p => p.Id == patientId);
     }
 }
