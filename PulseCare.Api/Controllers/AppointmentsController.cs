@@ -10,10 +10,12 @@ using PulseCare.API.Data.Enums;
 public class AppointmentsController : ControllerBase
 {
     private readonly IAppointmentRepository _appointmentRepository;
+    private readonly IUserRepository _userRepository;
 
-    public AppointmentsController(IAppointmentRepository appointmentRepository)
+    public AppointmentsController(IAppointmentRepository appointmentRepository, IUserRepository userRepository)
     {
         _appointmentRepository = appointmentRepository;
+        _userRepository = userRepository;
     }
 
     [Authorize(Roles = "admin")]
@@ -77,11 +79,13 @@ public class AppointmentsController : ControllerBase
 
         return Ok(doctorsAppointments.Select(a => new AppointmentDto
         {
+            Id = a.Id,
             Date = a.Date,
             Time = a.Time.ToString(@"hh\:mm"),
             Type = a.Type.ToString(),
             Status = a.Status.ToString(),
             DoctorName = a.Doctor?.User?.Name,
+            PatientName = a.Patient?.User?.Name,
             Reason = a.Comment,
             Notes = a.AppointmentNotes
                        .Select(n => n.Content)
@@ -93,11 +97,20 @@ public class AppointmentsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<AppointmentDto>> CreateAppointment(CreateAppointmentDto dto)
     {
+        var clerkId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(clerkId))
+        {
+            return Unauthorized();
+        }
+
+        var doctor = await _userRepository.GetDoctorWithClerkIdAsync(clerkId);
+
         var appointment = new Appointment
         {
             Id = Guid.NewGuid(),
             PatientId = dto.PatientId,
-            DoctorId = dto.DoctorId,
+            DoctorId = doctor!.Id,
             Date = dto.Date,
             Time = TimeSpan.Parse(dto.Time),
             Type = Enum.Parse<AppointmentType>(dto.Type),

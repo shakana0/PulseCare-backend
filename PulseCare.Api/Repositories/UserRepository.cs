@@ -30,6 +30,12 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(p => p.UserId == userId);
 
     }
+    public async Task<Doctor?> GetDoctorWithClerkIdAsync(string clerkId)
+    {
+        return await _context.Doctors
+            .Include(d => d.User)
+            .FirstOrDefaultAsync(d => d.User.ClerkId == clerkId);
+    }
 
     public async Task<User?> GetUserAsync(string clerkId)
     {
