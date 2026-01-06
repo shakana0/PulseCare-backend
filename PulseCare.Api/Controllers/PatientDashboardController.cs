@@ -10,12 +10,10 @@ using PulseCare.API.Data.Enums;
 public class PatientDashboardController : ControllerBase
 {
     private readonly IPatientRepository _patientRepository;
-    private readonly IUserRepository _userRepository;
 
-    public PatientDashboardController(IPatientRepository patientRepository, IUserRepository userRepository)
+    public PatientDashboardController(IPatientRepository patientRepository)
     {
         _patientRepository = patientRepository;
-        _userRepository = userRepository;
     }
 
     // GET: /dashboard
