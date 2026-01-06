@@ -2,5 +2,10 @@ using PulseCare.API.Data.Entities.Medical;
 
 public interface IAppointmentRepository
 {
-    Task<IEnumerable<Appointment>> GetAppointmentsById(Guid id);
+    Task<IEnumerable<Appointment>> GetAppointmentsByPatientIdAsync(Guid patientId);
+    Task<IEnumerable<Appointment>> GetAllAppointmentsAsync();
+    Task<Appointment?> GetAppointmentByAppointmentIdAsync(Guid appointmentId);
+    Task<Appointment> CreateAppointmentAsync(Appointment appointment);
+    Task<Appointment?> UpdateAppointmentAsync(Appointment appointment);
+    Task<bool> DeleteAppointmentAsync(Guid appointmentId);
 }

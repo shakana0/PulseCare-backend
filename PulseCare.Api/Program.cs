@@ -16,6 +16,7 @@ builder.Services.AddScoped<IHealthStatRepository, HealthStatRepository>();
 builder.Services.AddScoped<IMedicationRepository, MedicationRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<INoteRepository, NoteRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddDbContext<PulseCareDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

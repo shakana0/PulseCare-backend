@@ -21,10 +21,9 @@ public class PatientsController : ControllerBase
 
         var patientsDto = patients.Select(p => new PatientDto
         {
-            PatientId = p.Id,
-            UserId = p.UserId,
-            Name = p.User!.Name,
-            Email = p.User!.Email,
+            Id = p.Id,
+            Name = p.User?.Name,
+            Email = p.User?.Email,
             Phone = p.EmergencyContact?.Phone,
             Conditions = p.Conditions.Select(c => c.Name).ToList()
         }).ToList();
