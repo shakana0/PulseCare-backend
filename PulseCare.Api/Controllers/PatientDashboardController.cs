@@ -1,5 +1,8 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PulseCare.API.Data.Entities.Users;
+using PulseCare.API.Data.Enums;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -13,19 +16,30 @@ public class PatientDashboardController : ControllerBase
         _patientRepository = patientRepository;
     }
 
-    // GET: /{patientId}/dashboard
-    [HttpGet("{patientId}/dashboard")]
-    public async Task<ActionResult<PatientDashboardDto>> GetPatientDashboard(Guid patientId)
+    // GET: /dashboard
+    [HttpGet("dashboard")]
+    public async Task<ActionResult<PatientDashboardDto>> GetPatientDashboard()
     {
-        var patient = await _patientRepository.GetPatientByIdAsync(patientId);
+        var clerkUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+        ?? User.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrEmpty(clerkUserId))
+        {
+            return Unauthorized("User not authenticated");
+        }
+
+        var patient = await _patientRepository.GetPatientByClerkIdAsync(clerkUserId);
 
         if (patient == null)
+        {
             return NotFound();
+        }
 
         var patientDto = new PatientDto
         {
-            Name = patient.User?.Name,
-            Email = patient.User?.Email,
+            Id = patient.Id,
+            Name = patient.User!.Name,
+            Email = patient.User.Email,
             Phone = patient.EmergencyContact?.Phone,
             Conditions = patient.Conditions.Select(c => c.Name).ToList()
         };
@@ -58,6 +72,7 @@ public class PatientDashboardController : ControllerBase
             .OrderBy(a => a.Date)
             .Select(a => new AppointmentDto
             {
+                Id = a.Id,
                 Type = a.Type.ToString(),
                 DoctorName = a.Doctor.User.Name,
                 Date = a.Date,
@@ -72,6 +87,7 @@ public class PatientDashboardController : ControllerBase
             .OrderByDescending(n => n.Date)
             .Select(n => new NoteDto
             {
+                Id = n.Id,
                 Title = n.Title,
                 DoctorName = n.Doctor.User.Name,
                 Date = n.Date,
