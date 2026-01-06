@@ -58,4 +58,20 @@ public class UserRepository : IUserRepository
         _context.Patients.Add(patient);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<User?> GetUserByPatientIdAsync(Guid patientId)
+    {
+        var patient = await _context.Patients
+            .Include(p => p.User)
+            .FirstOrDefaultAsync(p => p.Id == patientId);
+        return patient?.User;
+    }
+
+    public async Task<User?> GetUserByDoctorIdAsync(Guid doctorId)
+    {
+        var doctor = await _context.Doctors
+            .Include(d => d.User)
+            .FirstOrDefaultAsync(d => d.Id == doctorId);
+        return doctor?.User;
+    }
 }
