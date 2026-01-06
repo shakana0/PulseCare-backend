@@ -1,5 +1,8 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PulseCare.API.Data.Entities.Users;
+using PulseCare.API.Data.Enums;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -13,20 +16,30 @@ public class PatientDashboardController : ControllerBase
         _patientRepository = patientRepository;
     }
 
-    // GET: /{patientId}/dashboard
-    [HttpGet("{patientId}/dashboard")]
-    public async Task<ActionResult<PatientDashboardDto>> GetPatientDashboard(Guid patientId)
+    // GET: /dashboard
+    [HttpGet("dashboard")]
+    public async Task<ActionResult<PatientDashboardDto>> GetPatientDashboard()
     {
-        var patient = await _patientRepository.GetPatientByIdAsync(patientId);
+        var clerkUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+        ?? User.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrEmpty(clerkUserId))
+        {
+            return Unauthorized("User not authenticated");
+        }
+
+        var patient = await _patientRepository.GetPatientByClerkIdAsync(clerkUserId);
 
         if (patient == null)
+        {
             return NotFound();
+        }
 
         var patientDto = new PatientDto
         {
             Id = patient.Id,
-            Name = patient.User?.Name,
-            Email = patient.User?.Email,
+            Name = patient.User!.Name,
+            Email = patient.User.Email,
             Phone = patient.EmergencyContact?.Phone,
             Conditions = patient.Conditions.Select(c => c.Name).ToList()
         };
