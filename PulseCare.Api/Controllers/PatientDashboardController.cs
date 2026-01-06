@@ -59,7 +59,7 @@ public class PatientDashboardController : ControllerBase
 
             patient = await _patientRepository.GetPatientByClerkIdAsync(clerkUserId);
 
-            if (patient == null)
+            if (patient == null || patient.User == null)
             {
                 return StatusCode(500, "Failed to create patient");
             }
@@ -68,8 +68,8 @@ public class PatientDashboardController : ControllerBase
         var patientDto = new PatientDto
         {
             Id = patient.Id,
-            Name = patient.User?.Name,
-            Email = patient.User?.Email,
+            Name = patient.User!.Name,
+            Email = patient.User.Email,
             Phone = patient.EmergencyContact?.Phone,
             Conditions = patient.Conditions.Select(c => c.Name).ToList()
         };
