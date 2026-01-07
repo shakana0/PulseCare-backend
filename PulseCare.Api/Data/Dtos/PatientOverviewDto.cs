@@ -1,3 +1,5 @@
+using PulseCare.API.Data.Entities.Medical;
+
 public class PatientOverviewDto
 {
     public string? Name { get; set; }
@@ -8,4 +10,7 @@ public class PatientOverviewDto
     public string? BloodType { get; set; }
     public List<string> Conditions { get; set; } = new();
     public List<string> Allergies { get; set; } = new();
+    public List<Medication> Medications { get; set; } = new();
+    public List<Appointment> Appointments { get; set; } = new();
+    public List<HealthStat> HealthStats { get; set; } = new();
 }

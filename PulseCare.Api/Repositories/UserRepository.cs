@@ -30,6 +30,12 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(p => p.UserId == userId);
 
     }
+    public async Task<Doctor?> GetDoctorWithClerkIdAsync(string clerkId)
+    {
+        return await _context.Doctors
+            .Include(d => d.User)
+            .FirstOrDefaultAsync(d => d.User.ClerkId == clerkId);
+    }
 
     public async Task<User?> GetUserAsync(string clerkId)
     {
@@ -45,7 +51,7 @@ public class UserRepository : IUserRepository
 
     public async Task<bool> IsExistingPatientAsync(string userId)
     {
-        return await _context.Users.AnyAsync(u => u.ClerkId == userId);
+        return await _context.Patients.Include(p => p.User).AnyAsync(u => u.User.ClerkId == userId);
     }
 
     public async Task<bool> IsExistingDoctorAsync(Guid userId)
