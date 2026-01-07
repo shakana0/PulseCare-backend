@@ -89,4 +89,18 @@ public class PatientsController : ControllerBase
 
         return Ok(overviewDto);
     }
+
+    [Authorize (Roles = "admin")]
+    [HttpPut("{patientId}")]
+    public async Task<IActionResult> UpdatePatient(UpdatePatientDto updateDto)
+    {
+        var patient = await _patientRepository.UpdatePatientAsync(updateDto);
+
+        if (patient == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(updateDto);
+    }
 }
