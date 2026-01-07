@@ -11,18 +11,19 @@ public class MessagesController : ControllerBase
     private readonly IMessageRepository _messageRepository;
     private readonly IConversationRepository _conversationRepository;
     private readonly IUserRepository _userRepository;
-
     private readonly IHubContext<PulseCareHub> _hub;
 
-    public MessagesController(IMessageRepository messageRepository, IConversationRepository conversationRepository, IUserRepository userRepository, IHubContext<PulseCareHub> hub)
+    public MessagesController(
+        IMessageRepository messageRepository,
+        IConversationRepository conversationRepository,
+        IUserRepository userRepository,
+        IHubContext<PulseCareHub> hub)
     {
         _messageRepository = messageRepository;
         _conversationRepository = conversationRepository;
         _userRepository = userRepository;
-
         _hub = hub;
     }
-
 
     [HttpPost]
     public async Task<IActionResult> SendMessage(Guid conversationId, [FromBody] SendMessageRequest request)
@@ -42,7 +43,6 @@ public class MessagesController : ControllerBase
         await _hub.Clients.Group(conversationId.ToString()).SendAsync("ReceiveMessage", dto);
 
         User? recipientUser;
-
         if (request.FromPatient)
         {
             recipientUser = await _userRepository.GetUserByDoctorIdAsync(conversation.DoctorId);
@@ -54,13 +54,12 @@ public class MessagesController : ControllerBase
 
         if (recipientUser != null && !string.IsNullOrEmpty(recipientUser.ClerkId))
         {
-
-            await _hub.Clients.User(recipientUser.ClerkId).SendAsync("ReceiveMessage", dto);
+            await _hub.Clients.User(recipientUser.ClerkId).SendAsync("NewMessageNotification", dto);
         }
         else
         {
             var targetType = request.FromPatient ? "Doktor" : "Patient";
-            Console.WriteLine($"SignalR Could not send private message notifications. Recipient ({targetType}) not found in DB.");
+            Console.WriteLine($"SignalR: Could not send private notification. Recipient ({targetType}) not found or missing ClerkId.");
         }
 
         return Ok(dto);
