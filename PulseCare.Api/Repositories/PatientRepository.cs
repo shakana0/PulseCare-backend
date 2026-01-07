@@ -15,22 +15,29 @@ public class PatientRepository : IPatientRepository
     {
         return await _context.Patients
             .Include(p => p.User)
-            .Include(p => p.EmergencyContact)
             .Include(p => p.Conditions)
-            .ToListAsync();
+            .Include(p => p.EmergencyContact)
+            .ToArrayAsync();
     }
 
     public async Task<Patient?> GetPatientByIdAsync(Guid patientId)
     {
         return await _context.Patients
-            .Include(p => p.User)
-            .Include(p => p.EmergencyContact)
-            .Include(p => p.Conditions)
-            .Include(p => p.Allergies)
-            .Include(p => p.Medications)
-            .Include(p => p.Appointments)
-            .Include(p => p.HealthStats)
-            .FirstOrDefaultAsync(p => p.Id == patientId);
+             .Include(p => p.User)
+             .Include(p => p.EmergencyContact)
+             .Include(p => p.Conditions)
+             .Include(p => p.Allergies)
+             .Include(p => p.Medications)
+             .Include(p => p.HealthStats)
+             .Include(p => p.Appointments)
+                 .ThenInclude(a => a.Doctor)
+                     .ThenInclude(d => d.User)
+             .Include(p => p.Notes)
+                 .ThenInclude(n => n.Doctor)
+                     .ThenInclude(d => d.User)
+             .FirstOrDefaultAsync(p => p.Id == patientId);
+
+
     }
 
     public async Task<Patient?> GetPatientByClerkIdAsync(string clerkId)
