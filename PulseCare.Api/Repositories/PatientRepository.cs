@@ -57,4 +57,21 @@ public class PatientRepository : IPatientRepository
                     .ThenInclude(d => d.User)
             .FirstOrDefaultAsync(p => p.User.ClerkId == clerkId);
     }
+
+    public async Task<Patient?> UpdatePatientAsync(UpdatePatientDto updatePatient)
+    {
+        var existingPatient = await _context.Patients
+            .Include(p => p.User)
+            .FirstOrDefaultAsync(p => p.Id == updatePatient.Id);
+
+        if (existingPatient == null)
+            return null;
+
+        existingPatient.User.Name = updatePatient.Name;
+        existingPatient.User.Email = updatePatient.Email;
+        existingPatient.DateOfBirth = updatePatient.DateOfBirth;
+        existingPatient.BloodType = updatePatient.BloodType;
+        await _context.SaveChangesAsync();
+        return existingPatient;
+    }
 }
