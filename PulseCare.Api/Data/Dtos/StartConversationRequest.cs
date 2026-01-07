@@ -1,6 +1,6 @@
 public record StartConversationRequest(
-    Guid? PatientId,
-    Guid? DoctorId,
+    string? PatientId,
+    string? DoctorId,
     string Subject,
     string Content,
     bool FromPatient
