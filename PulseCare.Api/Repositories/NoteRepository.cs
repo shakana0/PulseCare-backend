@@ -20,6 +20,7 @@ public class NoteRepository : INoteRepository
             .Include(n => n.Appointment)
             .Include(n => n.Patient)
                 .ThenInclude(p => p.User)
-            .Where(n => n.Patient.User.ClerkId == clerkUserId);
+            .Where(n => n.Patient.User.ClerkId == clerkUserId)
+            .ToListAsync();
     }
 }

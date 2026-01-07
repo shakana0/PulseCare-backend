@@ -1,12 +1,12 @@
 using System.Security.Claims;
-using Data.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PulseCare.API.Data.Entities.Users;
 
 namespace Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class NotesController : ControllerBase
 {
     private readonly INoteRepository _noteRepository;
