@@ -6,5 +6,4 @@ public interface IConversationRepository
     Task<Conversation> GetOrCreateForPatientAndDoctorAsync(Guid patientId, Guid doctorId);
     Task<List<Conversation>> GetConversationsForPatientAsync(Guid patientId);
     Task<List<Conversation>> GetConversationsForDoctorAsync(Guid doctorId);
-    Task<int> GetUnreadMessagesForDoctorAsync(Guid doctorId);
 }
