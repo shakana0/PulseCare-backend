@@ -5,10 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class AdminDashboardController(IAppointmentRepository appointmentRepository, IPatientRepository patientRepository) : ControllerBase
+public class AdminDashboardController(IAppointmentRepository appointmentRepository, IPatientRepository patientRepository, IMessageRepository messageRepository) : ControllerBase
 {
     private readonly IAppointmentRepository _appointmentRepository = appointmentRepository;
     private readonly IPatientRepository _patientRepository = patientRepository;
+    private readonly IMessageRepository _messageRepository = messageRepository;
 
     [Authorize(Roles = "admin")]
     [HttpGet]
@@ -22,7 +23,7 @@ public class AdminDashboardController(IAppointmentRepository appointmentReposito
 
         var patients = await _patientRepository.GetAllPatientsAsync();
         var appointments = await _appointmentRepository.GetDoctorsAppointmentsAsync(clerkUserId!);
-        // var unreadMessages = await _messageRepository.GetUnreadMessagesForDoctorAsync(clerkUserId);
+        var unreadMessages = await _messageRepository.GetUnreadMessagesForDoctorAsync(clerkUserId);
 
         var dashboardDto = new AdminDashboardDto
         {
@@ -36,6 +37,7 @@ public class AdminDashboardController(IAppointmentRepository appointmentReposito
                 .Take(3)
                 .Select(a => new PatientDto
                 {
+                    Id = a.Patient.Id,
                     Name = a.Patient.User?.Name,
                     Email = a.Patient.User?.Email,
                     Conditions = a.Patient.Conditions.Select(c => c.Name).ToList()
@@ -47,6 +49,7 @@ public class AdminDashboardController(IAppointmentRepository appointmentReposito
                 .Take(3)
                 .Select(a => new AppointmentDto
                 {
+                    Id = a.Patient.Id,
                     PatientName = a.Patient.User?.Name,
                     Date = a.Date,
                     Time = a.Time.ToString(@"hh\:mm"),
