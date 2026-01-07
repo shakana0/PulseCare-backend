@@ -36,6 +36,7 @@ public class AdminDashboardController(IAppointmentRepository appointmentReposito
                 .Take(3)
                 .Select(a => new PatientDto
                 {
+                    Id = a.Patient.Id,
                     Name = a.Patient.User?.Name,
                     Email = a.Patient.User?.Email,
                     Conditions = a.Patient.Conditions.Select(c => c.Name).ToList()
@@ -47,6 +48,7 @@ public class AdminDashboardController(IAppointmentRepository appointmentReposito
                 .Take(3)
                 .Select(a => new AppointmentDto
                 {
+                    Id = a.Patient.Id,
                     PatientName = a.Patient.User?.Name,
                     Date = a.Date,
                     Time = a.Time.ToString(@"hh\:mm"),
