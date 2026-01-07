@@ -60,7 +60,6 @@ public class PatientRepository : IPatientRepository
     {
         var existingPatient = await _context.Patients
             .Include(p => p.User)
-            .Include(p => p.EmergencyContact)
             .FirstOrDefaultAsync(p => p.Id == updatePatient.Id);
 
         if (existingPatient == null)
