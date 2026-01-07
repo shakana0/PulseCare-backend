@@ -36,6 +36,32 @@ public class HealthStatRepository : IHealthStatRepository
         return response;
     }
 
+    public async Task<List<HealthStatsDto>> GetMyHealthStatsAsync(string clerkId)
+    {
+        var healthData = await _context.HealthStats.Include(hs => hs.Patient).ThenInclude(p => p.User).Where(h => h.Patient.User.ClerkId == clerkId).ToListAsync();
+
+        if (!healthData.Any()) return new List<HealthStatsDto>();
+
+        var response = new List<HealthStatsDto>();
+
+        foreach (var item in healthData)
+        {
+            response.Add(
+                new HealthStatsDto
+                    (
+                        item.Id,
+                        item.Type,
+                        item.Value,
+                        item.Unit,
+                        item.Date,
+                        item.Status
+                    )
+            );
+        }
+
+        return response;
+    }
+
     public async Task<HealthStat?> GetHealthStatByIdAsync(Guid healthStatId)
     {
         return await _context.HealthStats.FindAsync(healthStatId);

@@ -7,7 +7,7 @@ namespace PulseCare.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-// [Authorize]
+[Authorize]
 public class HealthStatsController : ControllerBase
 {
     private readonly IHealthStatRepository _repository;
@@ -17,20 +17,29 @@ public class HealthStatsController : ControllerBase
     }
 
     [HttpGet("{patientId}")]
-    public async Task<ActionResult<List<HealthStatsDto>>> GetHealthStats(Guid patientId)
+    public async Task<ActionResult<List<HealthStatsDto>>> GetPatientHealthStats(Guid patientId)
     {
-        // var clerkUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-        //     ?? User.FindFirst("sub")?.Value;
-
-        // if (string.IsNullOrEmpty(clerkUserId))
-        // {
-        //     return Unauthorized("User not authenticated");
-        // }
-
         var healthStats = await _repository.GetHealthStatsAsync(patientId);
 
         return Ok(healthStats);
     }
+
+    [HttpGet]
+    public async Task<ActionResult<List<HealthStatsDto>>> GetMyHealthStats()
+    {
+        var clerkUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? User.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrEmpty(clerkUserId))
+        {
+            return Unauthorized("User not authenticated");
+        }
+
+        var healthStats = await _repository.GetMyHealthStatsAsync(clerkUserId);
+
+        return Ok(healthStats);
+    }
+
 
     [HttpPost("{patientId}")]
     public async Task<ActionResult<HealthStatsDto>> CreateHealthStats(Guid patientId, [FromBody] CreateHealtStatDto createHealthStatDto)
@@ -48,7 +57,7 @@ public class HealthStatsController : ControllerBase
 
         var createdHealthStat = await _repository.CreateHealthStatsAsync(healthStat);
 
-        return CreatedAtAction(nameof(GetHealthStats), new { patientId }, new HealthStatsDto(
+        return CreatedAtAction(nameof(GetPatientHealthStats), new { patientId }, new HealthStatsDto(
             createdHealthStat.Id,
             createdHealthStat.Type,
             createdHealthStat.Value,
