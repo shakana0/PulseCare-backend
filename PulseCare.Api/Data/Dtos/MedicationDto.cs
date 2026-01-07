@@ -6,7 +6,8 @@ public record MedicationDto
     string? Frequency,
     string? Instructions,
     int? TimesPerDay,
-    DateTime? StartDate
+    DateTime? StartDate,
+    DateTime? EndDate
 );
 
 public record CreateMedicationDto(
@@ -15,7 +16,8 @@ public record CreateMedicationDto(
     string Frequency,
     string? Instructions,
     int TimesPerDay,
-    DateTime StartDate
+    DateTime StartDate,
+    DateTime? EndDate
 );
 
 public record UpdateMedicationDto(
@@ -24,5 +26,6 @@ public record UpdateMedicationDto(
     string Frequency,
     string? Instructions,
     int TimesPerDay,
-    DateTime StartDate
+    DateTime StartDate,
+    DateTime? EndDate
 );

@@ -33,7 +33,8 @@ public class MedicationsController : ControllerBase
             m.Frequency,
             m.Instructions,
             m.TimesPerDay,
-            m.StartDate
+            m.StartDate,
+            m.EndDate
         )).ToList();
 
         return Ok(medicationsDto);
@@ -54,7 +55,8 @@ public class MedicationsController : ControllerBase
             m.Frequency,
             m.Instructions,
             m.TimesPerDay,
-            m.StartDate
+            m.StartDate,
+            m.EndDate
         )).ToList();
 
         return Ok(medicationsDto);
@@ -77,7 +79,8 @@ public class MedicationsController : ControllerBase
             Frequency = createMedicationDto.Frequency,
             Instructions = createMedicationDto.Instructions,
             TimesPerDay = createMedicationDto.TimesPerDay,
-            StartDate = createMedicationDto.StartDate
+            StartDate = createMedicationDto.StartDate,
+            EndDate = createMedicationDto.EndDate
         };
 
         var createdMedication = await _medicationRepository.CreateMedicationAsync(medication);
@@ -89,7 +92,8 @@ public class MedicationsController : ControllerBase
             createdMedication.Frequency,
             createdMedication.Instructions,
             createdMedication.TimesPerDay,
-            createdMedication.StartDate
+            createdMedication.StartDate,
+            createdMedication.EndDate
         ));
     }
 
@@ -106,7 +110,8 @@ public class MedicationsController : ControllerBase
             Frequency = updateMedicationDto.Frequency,
             Instructions = updateMedicationDto.Instructions,
             TimesPerDay = updateMedicationDto.TimesPerDay,
-            StartDate = updateMedicationDto.StartDate
+            StartDate = updateMedicationDto.StartDate,
+            EndDate = updateMedicationDto.EndDate
         };
 
         var updatedMedication = await _medicationRepository.UpdateMedicationAsync(medicationId, medication);
@@ -121,7 +126,8 @@ public class MedicationsController : ControllerBase
             updatedMedication.Frequency,
             updatedMedication.Instructions,
             updatedMedication.TimesPerDay,
-            updatedMedication.StartDate
+            updatedMedication.StartDate,
+            updatedMedication.EndDate
         ));
     }
 

@@ -5,10 +5,14 @@ using Microsoft.AspNetCore.Mvc;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class AdminDashboardController(IAppointmentRepository appointmentRepository, IPatientRepository patientRepository) : ControllerBase
+public class AdminDashboardController(
+    IAppointmentRepository appointmentRepository,
+    IPatientRepository patientRepository
+) : ControllerBase
 {
     private readonly IAppointmentRepository _appointmentRepository = appointmentRepository;
     private readonly IPatientRepository _patientRepository = patientRepository;
+
 
     [Authorize(Roles = "admin")]
     [HttpGet]
@@ -22,12 +26,10 @@ public class AdminDashboardController(IAppointmentRepository appointmentReposito
 
         var patients = await _patientRepository.GetAllPatientsAsync();
         var appointments = await _appointmentRepository.GetDoctorsAppointmentsAsync(clerkUserId!);
-        // var unreadMessages = await _messageRepository.GetUnreadMessagesForDoctorAsync(clerkUserId);
 
         var dashboardDto = new AdminDashboardDto
         {
             TotalPatients = patients.Count(),
-            UnreadMessages = 0, //ska ändras till UnreadMessages = unreadMessages,
             TodayAppointments = appointments.Count(a => a.Date.Date == DateTime.Today),
             RecentPatients = appointments
                 .Where(a => a.Date.Date + a.Time <= DateTime.Now)

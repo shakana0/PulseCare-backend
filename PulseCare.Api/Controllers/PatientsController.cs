@@ -57,7 +57,8 @@ public class PatientsController : ControllerBase
                 m.Frequency,
                 m.Instructions,
                 m.TimesPerDay,
-                m.StartDate
+                m.StartDate,
+                m.EndDate
             )).ToList() ?? new List<MedicationDto>(),
             Appointments = patient.Appointments?.Select(a => new AppointmentDto
             {

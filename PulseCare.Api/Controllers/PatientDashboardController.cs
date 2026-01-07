@@ -64,7 +64,8 @@ public class PatientDashboardController : ControllerBase
                 m.Frequency,
                 m.Instructions,
                 m.TimesPerDay,
-                m.StartDate
+                m.StartDate,
+                m.EndDate
             ))
             .ToList();
 
