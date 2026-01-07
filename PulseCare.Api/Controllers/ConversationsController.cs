@@ -104,7 +104,10 @@ public class ConversationsController : ControllerBase
             else
             {
                 var docUser = await _userRepository.GetUserAsync(request.DoctorId!);
+                if (docUser == null) return BadRequest("Target doctor user not found.");
+
                 var docProfile = await _userRepository.GetDoctorFromUserAsync(docUser.Id);
+                if (docProfile == null) return BadRequest("Target doctor profile missing.");
                 finalDoctorId = docProfile.Id;
             }
         }
@@ -114,13 +117,19 @@ public class ConversationsController : ControllerBase
             if (doctorProfile == null) return BadRequest("Doctor profile missing.");
             finalDoctorId = doctorProfile.Id;
 
-            var targetPatientUser = await _userRepository.GetUserAsync(request.PatientId!);
-            if (targetPatientUser == null) return BadRequest("Target patient user not found.");
+            if (Guid.TryParse(request.PatientId, out Guid patGuid))
+            {
+                finalPatientId = patGuid;
+            }
+            else
+            {
+                var targetPatientUser = await _userRepository.GetUserAsync(request.PatientId!);
+                if (targetPatientUser == null) return BadRequest("Target patient user not found.");
 
-            var targetPatientProfile = await _userRepository.GetPatientFromUserAsync(targetPatientUser.Id);
-            if (targetPatientProfile == null) return BadRequest("Target patient profile missing.");
-
-            finalPatientId = targetPatientProfile.Id;
+                var targetPatientProfile = await _userRepository.GetPatientFromUserAsync(targetPatientUser.Id);
+                if (targetPatientProfile == null) return BadRequest("Target patient profile missing.");
+                finalPatientId = targetPatientProfile.Id;
+            }
         }
         else
         {
