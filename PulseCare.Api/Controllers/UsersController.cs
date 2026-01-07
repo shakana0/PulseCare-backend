@@ -72,7 +72,12 @@ public class UsersController : ControllerBase
             return;
         }
 
-        var newPatient = new Patient { User = user };
+        var newPatient = new Patient
+        {
+            User = user,
+            CreatedAt = DateTime.UtcNow,
+            DateOfBirth = DateTime.UtcNow.AddYears(-25)
+        };
 
         await _userRepository.AddPatientAsync(newPatient);
     }
