@@ -19,6 +19,7 @@ builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 builder.Services.AddScoped<INoteRepository, NoteRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
 
 builder.Services.AddDbContext<PulseCareDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -95,7 +96,7 @@ if (app.Environment.IsDevelopment())
             .AllowAnyMethod()
             .AllowCredentials();
     });
-    
+
     app.UseSwagger();
     app.UseSwaggerUI();
 }
