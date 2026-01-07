@@ -79,6 +79,25 @@ public class AppointmentRepository : IAppointmentRepository
         return true;
     }
 
+    public async Task<IEnumerable<Appointment>> GetDoctorAppointmentsByClerkId(string clerkId)
+    {
+        return await _context.Appointments.Include(a => a.Doctor)
+                .ThenInclude(d => d.User)
+            .Include(a => a.Patient)
+                .ThenInclude(p => p.User)
+            .Include(a => a.AppointmentNotes)
+            .Where(a => a.Doctor.User.ClerkId == clerkId)
+            .ToListAsync();
+    }
+    
+    public async Task<IEnumerable<Appointment>> GetPatientAppointmentsByClerkId(string clerkId)
+    {
+        return await _context.Appointments.Include(a => a.Doctor)
+                .ThenInclude(d => d.User)
+            .Include(a => a.Patient)
+                .ThenInclude(p => p.User)
+            .Include(a => a.AppointmentNotes)
+            .Where(a => a.Patient.User.ClerkId == clerkId)
     public async Task<List<Appointment>> GetDoctorsAppointmentsAsync(string clerkId)
     {
         return await _context.Appointments
