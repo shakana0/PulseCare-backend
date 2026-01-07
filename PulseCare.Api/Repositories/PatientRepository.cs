@@ -68,7 +68,6 @@ public class PatientRepository : IPatientRepository
 
         existingPatient.User.Name = updatePatient.Name;
         existingPatient.User.Email = updatePatient.Email;
-        existingPatient.EmergencyContact.Phone = updatePatient.Phone;
         existingPatient.DateOfBirth = updatePatient.DateOfBirth;
         existingPatient.BloodType = updatePatient.BloodType;
         await _context.SaveChangesAsync();
