@@ -55,4 +55,12 @@ public class ConversationRepository : IConversationRepository
             .Include(c => c.Messages)
             .ToListAsync();
     }
+    public async Task<int> GetUnreadMessagesForDoctorAsync(Guid doctorId)
+    {
+        return await _context.Conversations
+            .Where(c => c.DoctorId == doctorId)
+            .SelectMany(c => c.Messages)
+            .CountAsync(m => m.FromPatient && !m.Read);
+    }
 }
+
