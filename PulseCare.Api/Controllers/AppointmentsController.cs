@@ -131,12 +131,17 @@ public class AppointmentsController : ControllerBase
         }
 
         var doctor = await _userRepository.GetDoctorWithClerkIdAsync(clerkId);
+        
+        if (doctor == null)
+        {
+            return NotFound();
+        }
 
         var appointment = new Appointment
         {
             Id = Guid.NewGuid(),
             PatientId = dto.PatientId,
-            DoctorId = doctor!.Id,
+            DoctorId = doctor.Id,
             Date = dto.Date,
             Time = TimeSpan.Parse(dto.Time),
             Type = Enum.Parse<AppointmentType>(dto.Type),
