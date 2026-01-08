@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PulseCare.API.Data.Entities.Users;
+using PulseCare.API.Data.Enums;
 
 namespace Controllers;
 
@@ -33,8 +34,8 @@ public class UsersController : ControllerBase
             await _userRepository.AddUserAsync(user);
         }
 
-        var userRole = User.FindFirst(ClaimTypes.Role);
-        if (userRole?.Value == "admin")
+        var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+        if (userRole == "admin")
         {
             await EnsureDoctorUser(user);
         }
@@ -87,12 +88,14 @@ public class UsersController : ControllerBase
 
     private User CreateUser(string clerkUserId, UserRequestDto request)
     {
+        var isDoctor = User.FindFirst(ClaimTypes.Role)?.Value == "admin";
 
         return new User
         {
             ClerkId = clerkUserId,
             Name = request.Name,
-            Email = request.Email
+            Email = request.Email,
+            Role = isDoctor ? UserRoleType.Doctor : UserRoleType.Patient
         };
     }
 }
