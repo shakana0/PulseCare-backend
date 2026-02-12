@@ -1,5 +1,7 @@
 ## Pulse Care – Backend Engine
 ## Lead Developer & System Architect
+**🔗 Live Demo:** [pulsecare.online](https://pulsecare.online/)
+
 Pulse Care is a digital healthcare platform. As the **Tech Lead**, I was responsible for the initial system design, infrastructure orchestration, and core backend services.
 
 ---
@@ -21,7 +23,8 @@ As the technical gatekeeper, I ensured code quality and architectural consistenc
 * **Policy Enforcement:** Established the **Database Schema Change Policy** below to prevent migration conflicts and environment drifts.
 
 ### 📈 Evidence of Leadership
-![Code Review Evidence](image_5cf835.png)
+![Code Review Evidence](pr-reviews.png)
+
 *Snapshot from GitHub Insights showing 18 conducted reviews and key contributions.*
 
 ---
